@@ -1009,6 +1009,7 @@ if ( $person->SiteAdmin ) {
 	$samenu[__("Power Management")][]='<a href="power_panel.php"><span>'.__("Edit Power Panels").'</span></a>';
 	$samenu[__("Path Connections")][]='<a href="paths.php"><span>'.__("View Path Connection").'</span></a>';
 	$samenu[__("Path Connections")][]='<a href="pathmaker.php"><span>'.__("Make Path Connection").'</span></a>';
+	$samenu[__("Path Connections")][]='<a href="rear_connection.php"><span>'.__("Make Rear Connection").'</span></a>';
 	$samenu[]='<a href="configuration.php"><span>'.__("Edit Configuration").'</span></a>';
 }
 if( AUTHENTICATION == "LDAP" ) {
