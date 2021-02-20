@@ -641,5 +641,30 @@ class DevicePorts {
 		return $this->Search($indexedbyid,true);
 	}
 
+	// Returns the device at the end of the path
+	function GetEndPathDevice($deviceID, $portNumber){
+		global $dbh;
+
+		$path = DevicePorts::followPathToEndPoint($deviceID,$portNumber);
+
+		$dev= new Device;
+
+		foreach($path as $p){
+			$tempP = new DevicePorts;
+			$tempP->DeviceID = $p->ConnectedDeviceID;
+			$tempP->PortNumber = $p->ConnectedPort;
+			$tempP->getPort();
+			if(in_array($tempP,$path)){
+				$dev->DeviceID = $p->DeviceID;
+				$dev->GetDevice();
+			}
+		}
+		if($dev->DeviceID == null){
+			$dev = null;
+		}
+		
+		return $dev;
+	}
+
 }
 ?>
