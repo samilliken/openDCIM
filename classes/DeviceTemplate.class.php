@@ -26,6 +26,7 @@ class DeviceTemplate {
 	var $TemplateID;
 	var $ManufacturerID;
 	var $Model;
+	var $EndofLife;
 	var $Height;
 	var $Weight;
 	var $Wattage;
@@ -58,6 +59,7 @@ class DeviceTemplate {
 		$this->TemplateID=intval($this->TemplateID);
 		$this->ManufacturerID=intval($this->ManufacturerID);
 		$this->Model=sanitize($this->Model);
+		$this->EndofLife=sanitize($this->EndofLife);
 		$this->Height=intval($this->Height);
 		$this->Weight=intval($this->Weight);
 		$this->Wattage=intval($this->Wattage);
@@ -75,6 +77,7 @@ class DeviceTemplate {
 
 	function MakeDisplay(){
 		$this->Model=stripslashes($this->Model);
+		$this->EndofLife=stripslashes($this->EndofLife);
         $this->Notes=stripslashes($this->Notes);
         $this->FrontPictureFile=stripslashes($this->FrontPictureFile);
 	    $this->RearPictureFile=stripslashes($this->RearPictureFile);
@@ -85,6 +88,7 @@ class DeviceTemplate {
 		$Template->TemplateID=$row["TemplateID"];
 		$Template->ManufacturerID=$row["ManufacturerID"];
 		$Template->Model=$row["Model"];
+		$Template->EndofLife=$row["EndofLife"];
 		$Template->Height=$row["Height"];
 		$Template->Weight=$row["Weight"];
 		$Template->Wattage=$row["Wattage"];
@@ -144,7 +148,9 @@ class DeviceTemplate {
 		$this->MakeSafe();
 
 		$sql="INSERT INTO fac_DeviceTemplate SET ManufacturerID=$this->ManufacturerID, 
-			Model=\"$this->Model\", Height=$this->Height, Weight=$this->Weight, 
+			Model=\"$this->Model\",
+			EndofLife=\"".date("Y-m-d",strtotime($this->EndofLife))."\",
+			Height=$this->Height, Weight=$this->Weight,
 			Wattage=$this->Wattage, DeviceType=\"$this->DeviceType\", 
 			PSCount=$this->PSCount, NumPorts=$this->NumPorts, Notes=\"$this->Notes\", 
 			FrontPictureFile=\"$this->FrontPictureFile\", RearPictureFile=\"$this->RearPictureFile\",
@@ -187,7 +193,9 @@ class DeviceTemplate {
 	function UpdateTemplate(){
 		$this->MakeSafe();
         $sql="UPDATE fac_DeviceTemplate SET ManufacturerID=$this->ManufacturerID,
-			Model=\"$this->Model\", Height=$this->Height, Weight=$this->Weight, 
+			Model=\"$this->Model\",
+			EndofLife=\"".date("Y-m-d",strtotime($this->EndofLife))."\",
+			Height=$this->Height, Weight=$this->Weight,
 			Wattage=$this->Wattage, DeviceType=\"$this->DeviceType\", 
 			PSCount=$this->PSCount, NumPorts=$this->NumPorts, Notes=\"$this->Notes\", 
 			FrontPictureFile=\"$this->FrontPictureFile\", RearPictureFile=\"$this->RearPictureFile\",
@@ -208,6 +216,7 @@ class DeviceTemplate {
 			// Template changed to CDU from something else, make the extra stuff
 			$cdut=new CDUTemplate();
 			$cdut->Model=$this->Model;
+			$cdut->EndofLife=$this->EndofLife;
 			$cdut->ManufacturerID=$this->ManufacturerID;
 			$cdut->CreateTemplate($this->TemplateID);
 		}
@@ -221,6 +230,7 @@ class DeviceTemplate {
 			// Template changed to Sensor from something else, make the extra stuff
 			$st=new SensorTemplate();
 			$st->Model=$this->Model;
+			$st->EndofLife=$this->EndofLife;
 			$st->ManufacturerID=$this->ManufacturerID;
 			$st->CreateTemplate($this->TemplateID);
 		}
@@ -311,6 +321,7 @@ class DeviceTemplate {
 		//JMGA Reset object in case of a lookup failure
 		$this->ManufacturerID=0;
 		$this->Model="";
+		$this->EndofLife="1970-01-01";
 		$this->Height=0;
 		$this->Weight=0;
 		$this->Wattage=0;

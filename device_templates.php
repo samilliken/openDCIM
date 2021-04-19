@@ -87,6 +87,7 @@
 	if(isset($_POST['action'])){
 		$template->ManufacturerID=$_POST['ManufacturerID'];
 		$template->Model=transform($_POST['Model']);
+		$template->EndofLife=$_POST['EndofLife'];
 		$template->Height=$_POST['Height'];
 		$template->Weight=$_POST['Weight'];
 		$template->Wattage=(isset($_POST['Wattage']))?$_POST['Wattage']:0;
@@ -198,6 +199,7 @@
 			$sensortemplate->TemplateID=$template->TemplateID;
 			$sensortemplate->ManufacturerID=$template->ManufacturerID;
 			$sensortemplate->Model=$template->Model;
+			$sensortemplate->EndofLife=$template->EndofLife;
 			$sensortemplate->TemperatureOID=$_POST['TemperatureOID'];
 			$sensortemplate->HumidityOID=$_POST['HumidityOID'];
 			$sensortemplate->TempMultiplier=$_POST['TempMultiplier'];
@@ -212,6 +214,7 @@
 			$cdutemplate->TemplateID=$template->TemplateID;
 			$cdutemplate->ManufacturerID=$template->ManufacturerID;
 			$cdutemplate->Model=$template->Model;
+			$cdutemplate->EndofLife=$template->EndofLife;
 			$cdutemplate->Managed=isset($_POST['Managed'])?1:0;
 			$cdutemplate->ATS=isset($_POST['ATS'])?1:0;
 			$cdutemplate->VersionOID=$_POST['VersionOID'];
@@ -383,6 +386,7 @@
 				},500);
 			}
 		});
+		$('#EndofLife').datepicker({dateFormat: "yy-mm-dd"});
         
 		$('#clone').click(function(){
 			$('#TemplateID').val(0);
@@ -759,6 +763,10 @@ echo '    </select>
 <div>
    <div><label for="Model">',__("Model"),'</label></div>
    <div><input type="text" name="Model" id="Model" class="validate[required]" value="',$template->Model,'"></div>
+</div>
+<div>
+   <div><label for="EndofLife">',__("End of Life"),'</label></div>
+   <div><input type="text" class="validate[optional,custom[date]] datepicker" name="EndofLife" id="EndofLife" value="'.(($template->EndofLife>'0000-00-00 00:00:00')?date('Y-m-d',strtotime($template->EndofLife)):"").'"></div>
 </div>
 <div>
    <div><label for="Height">',__("Height"),'</label></div>

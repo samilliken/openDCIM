@@ -27,6 +27,7 @@ class CDUTemplate {
 	var $TemplateID;
 	var $ManufacturerID;
 	var $Model;
+	var $EndofLife;
 	var $Managed;
 	var $ATS;
 	var $VersionOID;
@@ -54,6 +55,7 @@ class CDUTemplate {
 		$this->TemplateID=intval($this->TemplateID);
 		$this->ManufacturerID=intval($this->ManufacturerID);
 		$this->Model=sanitize($this->Model);
+		$this->EndofLife=sanitize($this->EndofLife);
 		$this->Managed=intval($this->Managed);
 		$this->ATS=intval($this->ATS);
 		$this->VersionOID=sanitize($this->VersionOID);
@@ -76,6 +78,7 @@ class CDUTemplate {
 
 	function MakeDisplay(){
 		$this->Model=stripslashes($this->Model);
+		$this->EndofLife=stripslashes($this->EndofLife);
 		$this->VersionOID=stripslashes($this->VersionOID);
 		$this->OutletNameOID=stripslashes($this->OutletNameOID);
 		$this->OutletDescOID=stripslashes($this->OutletDescOID);
@@ -94,6 +97,7 @@ class CDUTemplate {
 		$template->TemplateID=$row["TemplateID"];
 		$template->ManufacturerID=$row["ManufacturerID"];
 		$template->Model=$row["Model"];
+		$template->EndofLife=$row["EndofLife"];
 		$template->Managed=$row["Managed"];
 		$template->ATS=$row["ATS"];
 		$template->VersionOID=$row["VersionOID"];
@@ -156,7 +160,9 @@ class CDUTemplate {
 		$this->MakeSafe();
 		
 		$sql="INSERT INTO fac_CDUTemplate SET ManufacturerID=$this->ManufacturerID, 
-			Model=\"$this->Model\", Managed=$this->Managed, ATS=$this->ATS,
+			Model=\"$this->Model\",
+			EndofLife=\"".date("Y-m-d",strtotime($this->EndofLife))."\",
+			Managed=$this->Managed, ATS=$this->ATS,
 			VersionOID=\"$this->VersionOID\", 
 			OutletNameOID=\"$this->OutletNameOID\",
 			OutletDescOID=\"$this->OutletDescOID\",
@@ -187,7 +193,9 @@ class CDUTemplate {
 		$oldtemplate->GetTemplate();
 		
 		$sql="UPDATE fac_CDUTemplate SET ManufacturerID=$this->ManufacturerID, 
-			Model=\"$this->Model\", Managed=$this->Managed, ATS=$this->ATS,
+			Model=\"$this->Model\",
+			EndofLife=\"".date("Y-m-d",strtotime($this->EndofLife))."\",
+			Managed=$this->Managed, ATS=$this->ATS,
 			VersionOID=\"$this->VersionOID\", 
 			OutletNameOID=\"$this->OutletNameOID\",
 			OutletDescOID=\"$this->OutletDescOID\",

@@ -22,6 +22,7 @@
 	if(isset($_REQUEST['action'])&&(($_REQUEST['action']=='Create')||($_REQUEST['action']=='Update'))){
 		$template->ManufacturerID = $_REQUEST['manufacturerid'];
 		$template->Model = transform( $_REQUEST['model'] );
+		$template->EndofLife = isset($_REQUEST['endoflife'])?1:0;
 		$template->Managed = isset($_REQUEST['managed'])?1:0;
 		$template->ATS = isset($_REQUEST['ats'])?1:0;
 		$template->SNMPVersion = $_REQUEST['snmpversion'];
@@ -112,6 +113,10 @@ echo '    </select>
 <div>
    <div><label for="model">',__("Model"),'</label></div>
    <div><input type="text" name="model" id="model" value="',$template->Model,'" size=40></div>
+</div>
+<div>
+   <div><label for="endoflife">',__("End of Life"),'</label></div>
+   <div><input type="text" class="validate[optional,custom[date]] datepicker" name="endoflife" id="endoflife" value="'.(($template->EndofLife>'0000-00-00 00:00:00')?date('Y-m-d',strtotime($template->EndofLife)):"").'"></div>
 </div>
 <div>
    <div><label for="managed">',__("Managed"),'</label></div>
