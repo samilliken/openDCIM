@@ -110,6 +110,58 @@ class SwitchInfo {
 		return $x;
 	}
 
+	static function ifaceCmp($a, $b)
+	{
+		$sep = array(":","/",".","-");
+		$a = split(" ",str_replace($sep," ",$a));
+		$b = split(" ",str_replace($sep," ",$b));
+		$max = min(sizeof($a),sizeof($b));
+		$ret = 0;
+		for($i=0; $i<$max;$i++){
+			$x = $a[$i];
+			$y = $b[$i];
+			if($x == $y) continue;
+			if(is_numeric($x) && is_numeric($y)) {
+				$ret = (int)($x) < (int)($y) ? -1 : 1;
+			} else {
+				$ret = strcmp($x,$y);
+			}
+			if( $ret != 0 ) break;
+		}
+		return $ret;
+	}
+
+	static function getPortList($DeviceID,$portid=null){
+		if(!$dev=SwitchInfo::BasicTests($DeviceID)){
+			return false;
+		}
+
+		// We never did finish the discussion of if we should use the mib vs the oid
+		$baseOID = ".1.3.6.1.2.1.31.1.1.1.1";
+		$baseOID = "IF-MIB::ifName";
+		$typeOID = ".1.3.6.1.2.1.2.2.1.3";
+		$typeOID = "IF-MIB::ifType";
+
+		$nameList=self::OSS_SNMP_Lookup($dev,"names",$portid,$baseOID);
+		$typeList=self::OSS_SNMP_Lookup($dev,"types",$portid,$typeOID);
+
+		$portList=array();
+		if(is_array($nameList)){
+			#asort($nameList);
+			uasort($nameList,array("SwitchInfo","ifaceCmp"));
+			$fpType="";
+			$saving=false;
+			foreach($nameList as $i => $desc){
+				if($i==$dev->FirstPortNum){ $saving=true; $fpType = $typeList[$i]; }
+				if($fpType!="" && $typeList[$i]!=$fpType) continue;
+				if($saving){$portList[]=$i;}
+				if(sizeof($portList)==$dev->Ports){break;}
+			}
+		}
+
+		return $portList;
+	}
+
 	static function getPortNames($DeviceID,$portid=null){
 		if(!$dev=SwitchInfo::BasicTests($DeviceID)){
 			return false;
@@ -120,14 +172,12 @@ class SwitchInfo {
 		$baseOID = "IF-MIB::ifName"; 
 
 		$nameList=self::OSS_SNMP_Lookup($dev,"descriptions",$portid,$baseOID);
+		$portList=self::getPortList($DeviceID,$portid);
 
 		if(is_array($nameList)){
-			$saving=false;
 			$newList=array();
-			foreach($nameList as $i => $desc){
-				if($i==$dev->FirstPortNum){$saving=true;}
-				if($saving){$newList[sizeof($newList)+1]=$desc;}
-				if(sizeof($newList)==$dev->Ports){break;}
+			foreach($portList as $ifIndex) {
+				$newList[sizeof($newList)+1] = $nameList[$ifIndex];
 			}
 			$nameList=$newList;
 		}
@@ -144,14 +194,12 @@ class SwitchInfo {
 		$baseOID="IF-MIB::ifOperStatus"; // arguments for not using MIB?
 
 		$statusList=self::OSS_SNMP_Lookup($dev,"operationStates",$portid,$baseOID);
+		$portList=self::getPortList($DeviceID,$portid);
 
 		if(is_array($statusList)){
-			$saving=false;
 			$newList=array();
-			foreach($statusList as $i => $status){
-				if($i==$dev->FirstPortNum){$saving=true;}
-				if($saving){$newList[sizeof($newList)+1]=$status;}
-				if(sizeof($newList)==$dev->Ports){break;}
+			foreach($portList as $ifIndex) {
+				$newList[sizeof($newList)+1] = $statusList[$ifIndex];
 			}
 			$statusList=$newList;
 		}
@@ -168,14 +216,12 @@ class SwitchInfo {
 		$baseOID="IF-MIB::ifAlias";
 
 		$aliasList=self::OSS_SNMP_Lookup($dev,"aliases",$portid,$baseOID);
+		$portList=self::getPortList($DeviceID,$portid);
 		
 		if(is_array($aliasList)){
-			$saving=false;
 			$newList=array();
-			foreach($aliasList as $i => $alias){
-				if($i==$dev->FirstPortNum){$saving=true;}
-				if($saving){$newList[sizeof($newList)+1]=$alias;}
-				if(sizeof($newList)==$dev->Ports){break;}
+			foreach($portList as $ifIndex) {
+				$newList[sizeof($newList)+1] = $aliasList[$ifIndex];
 			}
 			$aliasList=$newList;
 		}
