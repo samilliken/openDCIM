@@ -103,9 +103,8 @@
 				}
 				exit;
 			} else {
-				$content="<h3>Login failed.</h3>You are in maintenance mode, as set by the site" .
-					"administrator in the database.";
-				debug_error_log("Maintenance mode is set and invalid credentials were passed.");
+				$content="<h3>Login failed.</h3>You are in LDAP debug mode, as set by the site administrator in the database.";
+				debug_error_log("LDAP debug mode is set and invalid credentials were passed.");
 			}
 		} else {
 			$ldapConn=ldap_connect($config->ParameterArray['LDAPServer']);
