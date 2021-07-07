@@ -97,60 +97,48 @@ Example usage:
 	header("Location: $url");
 	exit;
 */
-function path(){
-	$path=explode("/",sanitize($_SERVER['REQUEST_URI']));
-	unset($path[(count($path)-1)]);
-	$path=implode("/",$path);
-	return $path;
-}
 function redirect($target = null) {
-	// No argument was passed.  If a referrer was set, send them back to whence they came.
-	if(is_null($target)){
-		if(isset($_SERVER["HTTP_REFERER"])){
-			return $_SERVER["HTTP_REFERER"];
-		}else{
-			// No referrer was set so send them to the root application directory
-			$target=path();
-		}
-	}else{
-		//Try to ensure that a properly formatted uri has been passed in.
-		if(substr($target, 0, 4)!='http'){
-			//doesn't start with http or https check to see if it is a path
-			if(substr($target, 0, 1)!='/'){
-				//didn't start with a slash so it must be a filename
-				$target=path()."/".$target;
-			}else{
-				//started with a slash let's assume they know what they're doing
-				$target=path().$target;
-			}
-		}else{
-			//Why the heck did you send a full url here instead of just doing a header?
-			return $target;
-		}
-	}
-	// If we made it here we didn't return above so bring in the config values
-	$config=new Config();
-	// Write out the value of the InstallURL to a shorter variable and trim it of whitespace
-	// just in case some smart ass managed to get something weird in the value
-	$installURL=trim($config->ParameterArray['InstallURL']);
-	// Keep some smart ass admin from trying to use this to access weird things
-	$installURL=str_replace("..","",$installURL);
-	// Since we format our path above using a / trim any extras from the user supplied
-	// value or if they pull something cute and put ////
-	$installURL=rtrim($installURL,"/");
-	// Check if our $installURL value is blank
-	if($installURL!=""){
-		// $installURL isn't blank so combine it with the target to get a valid redirect target
-		$url = $installURL.$target;
-	}else{
-		// $installURL is blank so let's try to guess what the server will be for the redirect
-		if(array_key_exists('HTTPS', $_SERVER) && $_SERVER["HTTPS"]=='on') {
-			$url = "https://".$_SERVER['SERVER_NAME'].$target;
+	$config = new Config();
+	// Get URL from InstallURL, if it's set. Remove any trailing slashes.
+	$url = rtrim(trim($config->ParameterArray['InstallURL']), "/");
+	if (empty($url)) {
+		// If InstallURL is not set, figure out (and get right) the path from REQUEST_URI,
+		// determine the scheme (HTTP or HTTPS),
+		// and what our server name is from SERVER_NAME.
+		$path = explode("/", sanitize($_SERVER['REQUEST_URI']));
+		unset($path[count($path) - 1]);
+		$path = implode("/", $path);
+
+		if (array_key_exists('HTTPS', $_SERVER) && $_SERVER["HTTPS"]=='on') {
+			$url = "https://" . $_SERVER['SERVER_NAME'] . $path;
 		} else {
-			$url = "http://".@$_SERVER['SERVER_NAME'].$target;
+			$url = "http://" . @$_SERVER['SERVER_NAME'] . $path;
 		}
 	}
-	return $url;
+
+	// No argument was passed.  If a referrer was set, send them back to whence they came.
+	if (is_null($target)) {
+		if (isset($_SERVER["HTTP_REFERER"])){
+			return $_SERVER["HTTP_REFERER"];
+		} else {
+			// No referrer was set so send them to the root application directory
+			return $url;
+		}
+	} else {
+		//Try to ensure that a properly formatted uri has been passed in.
+		if (substr($target, 0, 4)!='http') {
+			//doesn't start with http or https check to see if it is a path
+			if (substr($target, 0, 1)!='/') {
+				//didn't start with a slash so it must be a filename
+				$target = $url . "/" . $target;
+			} else {
+				//started with a slash let's assume they know what they're doing
+				$target = $url . $target;
+			}
+		}
+	}
+
+	return $target;
 }
 
 // search haystack for needle and return an array of the key path,
