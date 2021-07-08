@@ -229,27 +229,27 @@ if($object>0){
 			switch($row["Field"]){
 				case "SNMPCommunity":
 					if(isset($pdu->SNMPCommunity)){
-						$tooltip.=__($row["Label"]).": ".$pdu->$row["Field"]."<br>\n";
+						$tooltip.=__($row["Label"]).": ".$pdu->{$row["Field"]}."<br>\n";
 					}else{
 						if($dev->Hypervisor){
-							$tooltip.=__($row["Label"]).": ".$dev->$row["Field"]."<br>\n";
+							$tooltip.=__($row["Label"]).": ".$dev->{$row["Field"]}."<br>\n";
 						}
 					}
 					break;
 				case "Hypervisor":
 					if($dev->Hypervisor){
-						$tooltip.=__($row["Label"]).": ".$dev->$row["Field"]."<br>\n";
+						$tooltip.=__($row["Label"]).": ".$dev->{$row["Field"]}."<br>\n";
 					}
 					break;
 				case "EscalationID":
 					$esc=new Escalations();
-					$esc->EscalationID=$dev->$row["Field"];
+					$esc->EscalationID=$dev->{$row["Field"]};
 					$esc->GetEscalation();
 					$tooltip.=__($row["Label"]).": $esc->Details<br>\n";
 					break;
 				case "EscalationTimeID":
 					$escTime=new EscalationTimes();
-					$escTime->EscalationTimeID=$dev->$row["Field"];
+					$escTime->EscalationTimeID=$dev->{$row["Field"]};
 					$escTime->GetEscalationTime();
 					$tooltip.=__($row["Label"]).": $escTime->TimePeriod<br>\n";
 					break;
@@ -270,7 +270,7 @@ if($object>0){
 					break;
 				case "ChassisSlots":
 					if($dev->DeviceType=='Chassis'){
-						$tooltip.=__($row["Label"])." ".$dev->$row["Field"]."<br>\n";
+						$tooltip.=__($row["Label"])." ".$dev->{$row["Field"]}."<br>\n";
 					}
 					break;
 				case "Model":
@@ -319,10 +319,10 @@ if($object>0){
 					}
 					break;
 				case "Weight":
-					$dev->$row["Field"]=$dev->GetDeviceTotalWeight();
+					$dev->{$row["Field"]}=$dev->GetDeviceTotalWeight();
 					goto end; // cringe now
 				case "NominalWatts":
-					$dev->$row["Field"]=$dev->GetDeviceTotalPower();
+					$dev->{$row["Field"]}=$dev->GetDeviceTotalPower();
 					goto end; // fuck you, yeah I really did that
 				case "DeviceType":
 					// if this is a chassis device display the number of blades?
