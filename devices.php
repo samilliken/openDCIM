@@ -1949,7 +1949,7 @@ echo '
 
 echo '		</div>
 		<div>
-			<div><label for="TemplateID">',__("Device Class"),'</label></div>
+			<div><label for="TemplateID"><a href="device_templates.php?TemplateID=',$dev->TemplateID,'">',__("Device Class"),'</a></label></div>
 			<div><select name="TemplateID" id="TemplateID">
 				<option value=0>',__("Select a template..."),'</option>';
 
